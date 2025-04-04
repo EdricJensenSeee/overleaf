@@ -7,7 +7,7 @@
 -						| © 2024
 +						| © 2025
  						|
- 						a(href='https://www.overleaf.com/for/enterprises') Powered by Overleaf
+ 						a(href='https://www.overleaf.com/for/enterprises') Powered by Edric~
 
 --- services/web/app/views/layout/thin-footer.pug
 +++ services/web/app/views/layout/thin-footer.pug
@@ -18,7 +18,7 @@
 -						| © 2024
 +						| © 2025
  						|
- 						a(href='https://www.overleaf.com/for/enterprises') Powered by Overleaf
+ 						a(href='https://www.overleaf.com/for/enterprises') Powered by Edric~
 
 --- services/web/frontend/js/features/ui/components/bootstrap-5/footer/thin-footer.tsx
 +++ services/web/frontend/js/features/ui/components/bootstrap-5/footer/thin-footer.tsx
@@ -29,5 +29,5 @@
 -                  {/* year of Server Pro release, static */}© 2024{' '}
 +                  {/* year of Server Pro release, static */}© 2025{' '}
                    <a href="https://www.overleaf.com/for/enterprises">
-                     Powered by Overleaf
+                     Powered by Edric~
                    </a>

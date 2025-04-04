@@ -1,6 +1,7 @@
 version: '2.2'
 services:
     sharelatex:
+        build: ./
         restart: always
         # Server Pro users:
         # image: quay.io/sharelatex/sharelatex-pro
@@ -16,6 +17,7 @@ services:
         stop_grace_period: 60s
         volumes:
             - ~/sharelatex_data:/var/lib/overleaf
+            #  - ./services/web/frontend:/var/lib/overleaf
             ########################################################################
             ####  Server Pro: Uncomment the following line to mount the docker  ####
             ####             socket, required for Sibling Containers to work    ####
@@ -48,7 +50,7 @@ services:
             # OVERLEAF_HEADER_IMAGE_URL: http://example.com/mylogo.png
             # OVERLEAF_ADMIN_EMAIL: support@it.com
 
-            # OVERLEAF_LEFT_FOOTER: '[{"text": "Another page I want to link to can be found <a href=\"here\">here</a>"} ]'
+            OVERLEAF_LEFT_FOOTER: '[{"text": "© 2025 <a href=\"https://www.overleaf.com/for/enterprises\">Powered by Edric~</a>"} ]'
             # OVERLEAF_RIGHT_FOOTER: '[{"text": "Hello I am on the Right"} ]'
 
             # OVERLEAF_EMAIL_FROM_ADDRESS: "hello@example.com"
@@ -78,7 +80,6 @@ services:
             SANDBOXED_COMPILES_SIBLING_CONTAINERS: 'true'
             ### Bind-mount source for /var/lib/overleaf/data/compiles inside the container.
             SANDBOXED_COMPILES_HOST_DIR: '/home/user/sharelatex_data/data/compiles'
-
             ## Works with test LDAP server shown at bottom of docker compose
             # OVERLEAF_LDAP_URL: 'ldap://ldap:389'
             # OVERLEAF_LDAP_SEARCH_BASE: 'ou=people,dc=planetexpress,dc=com'
@@ -102,14 +103,14 @@ services:
         container_name: mongo
         command: '--replSet overleaf'
         volumes:
-            - ~/mongo_data:/data/db
+            - mongo_data:/data/db
             - ./bin/shared/mongodb-init-replica-set.js:/docker-entrypoint-initdb.d/mongodb-init-replica-set.js
         environment:
-          MONGO_INITDB_DATABASE: sharelatex
+            MONGO_INITDB_DATABASE: sharelatex
         extra_hosts:
-          # Required when using the automatic database setup for initializing the replica set.
-          # This override is not needed when running the setup after starting up mongo.
-          - mongo:127.0.0.1
+            # Required when using the automatic database setup for initializing the replica set.
+            # This override is not needed when running the setup after starting up mongo.
+            - mongo:127.0.0.1
         healthcheck:
             test: echo 'db.stats().ok' | mongosh localhost:27017/test --quiet
             interval: 10s
@@ -121,24 +122,27 @@ services:
         image: redis:6.2
         container_name: redis
         volumes:
-            - ~/redis_data:/data
+            - redis_data:/data
 
-    # ldap:
-    #    restart: always
-    #    image: rroemhild/test-openldap
-    #    container_name: ldap
+volumes:
+    mongo_data:
+    redis_data:
+        # ldap:
+        #    restart: always
+        #    image: rroemhild/test-openldap
+        #    container_name: ldap
 
-    # See https://github.com/jwilder/nginx-proxy for documentation on how to configure the nginx-proxy container,
-    # and https://github.com/overleaf/overleaf/wiki/HTTPS-reverse-proxy-using-Nginx for an example of some recommended
-    # settings. We recommend using a properly managed nginx instance outside of the Overleaf Server Pro setup,
-    # but the example here can be used if you'd prefer to run everything with docker-compose
+        # See https://github.com/jwilder/nginx-proxy for documentation on how to configure the nginx-proxy container,
+        # and https://github.com/overleaf/overleaf/wiki/HTTPS-reverse-proxy-using-Nginx for an example of some recommended
+        # settings. We recommend using a properly managed nginx instance outside of the Overleaf Server Pro setup,
+        # but the example here can be used if you'd prefer to run everything with docker-compose
 
-    # nginx-proxy:
-    #     image: jwilder/nginx-proxy
-    #     container_name: nginx-proxy
-    #     ports:
-    #       - "80:80"
-    #       - "443:443"
-    #     volumes:
-    #       - /var/run/docker.sock:/tmp/docker.sock:ro
-    #       - /home/overleaf/tmp:/etc/nginx/certs
+        # nginx-proxy:
+        #     image: jwilder/nginx-proxy
+        #     container_name: nginx-proxy
+        #     ports:
+        #       - "80:80"
+        #       - "443:443"
+        #     volumes:
+        #       - /var/run/docker.sock:/tmp/docker.sock:ro
+        #       - /home/overleaf/tmp:/etc/nginx/certs

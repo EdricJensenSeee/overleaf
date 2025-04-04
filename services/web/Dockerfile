@@ -59,6 +59,15 @@ RUN OVERLEAF_CONFIG=/overleaf/services/web/config/settings.webpack.js nice npm r
 FROM webpack AS webpack-no-sourcemaps
 RUN nice find /overleaf/services/web/public -name '*.js.map' -delete
 
+FROM sharelatex/sharelatex
+
+# Copy your modified frontend files
+COPY services/web/frontend/js/features/ui/components/bootstrap-5/footer/thin-footer.tsx /overleaf/services/web/frontend/js/features/ui/components/bootstrap-5/footer/thin-footer.tsx
+
+# Rebuild the frontend assets
+WORKDIR /overleaf/services/web
+RUN npm run webpack:production
+
 
 # copy source code and precompile pug images
 FROM deps-prod AS pug
@@ -72,6 +81,8 @@ RUN OVERLEAF_CONFIG=/overleaf/services/web/config/settings.overrides.saas.js nic
 FROM pug AS app-only
 USER node
 CMD ["node", "--expose-gc", "app.mjs"]
+
+
 
 
 # the final production image, with webpack production build but without source maps
